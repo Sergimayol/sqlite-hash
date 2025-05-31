@@ -25,3 +25,8 @@ SELECT name, last_name, md5(name, last_name), hex(md5_bytes(name, last_name)) FR
 SELECT *, sha256(p.name, p.last_name) FROM people p;
 
 SELECT *, blake2s256(p.name, p.last_name) FROM people p;
+
+SELECT sha256('foo', 'bar');
+SELECT hex(sha256_bytes('foo', 'bar'));
+SELECT sha256_safe('foo', 'bar');
+SELECT hex(sha256_bsafe('foo', 'bar'));

@@ -1,4 +1,4 @@
-use hash::{hash_fn, OutputFormat};
+use hash::{hash_fn, ModeFormat, OutputFormat};
 
 use ascon_hash::AsconHash256;
 use belt_hash::BeltHash;
@@ -33,11 +33,19 @@ macro_rules! define_hash_functions {
         paste! {
             $(
                 fn [<$name _hex>](ctx: *mut sqlite3_context, values: &[*mut sqlite3_value]) -> Result<()> {
-                    hash_fn::<$type>(ctx, values, OutputFormat::Hex)
+                    hash_fn::<$type>(ctx, values, OutputFormat::Hex, ModeFormat::RawJoin)
                 }
 
                 fn [<$name _bytes>](ctx: *mut sqlite3_context, values: &[*mut sqlite3_value]) -> Result<()> {
-                    hash_fn::<$type>(ctx, values, OutputFormat::Bytes)
+                    hash_fn::<$type>(ctx, values, OutputFormat::Bytes, ModeFormat::RawJoin)
+                }
+
+                fn [<$name _safe>](ctx: *mut sqlite3_context, values: &[*mut sqlite3_value]) -> Result<()> {
+                    hash_fn::<$type>(ctx, values, OutputFormat::Hex, ModeFormat::WithSep)
+                }
+
+                fn [<$name _bsafe>](ctx: *mut sqlite3_context, values: &[*mut sqlite3_value]) -> Result<()> {
+                    hash_fn::<$type>(ctx, values, OutputFormat::Bytes, ModeFormat::WithSep)
                 }
             )*
         }
@@ -49,11 +57,14 @@ macro_rules! register_hash_functions {
         paste! {
             $(
                 define_scalar_function($db, stringify!($name), -1, [<$name _hex>], $flags)?;
+                define_scalar_function($db, concat!(stringify!($name), "_safe"), -1, [<$name _safe>], $flags)?;
                 define_scalar_function($db, concat!(stringify!($name), "_bytes"), -1, [<$name _bytes>], $flags)?;
+                define_scalar_function($db, concat!(stringify!($name), "_bsafe"), -1, [<$name _bsafe>], $flags)?;
             )*
         }
     };
 }
+
 define_hash_functions!(
     (md5, Md5),
     (sha1, Sha1),
