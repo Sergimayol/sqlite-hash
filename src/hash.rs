@@ -1,4 +1,4 @@
-use md5::Digest;
+use digest::Digest;
 use sqlite_loadable::prelude::*;
 use sqlite_loadable::{api, Result};
 
