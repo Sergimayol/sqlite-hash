@@ -6,20 +6,22 @@ SELECT load_extension('./target/release/libsqlite_hash', 'sqlite3_hash_init');
 
 .timer on
 
-CREATE TABLE personas (
-    nombre TEXT,
-    apellido TEXT
+CREATE TABLE people (
+    name TEXT,
+    last_name TEXT
 );
 
-INSERT INTO personas VALUES ('Alice', 'Smith'), ('Bob', 'Lee');
+INSERT INTO people VALUES ('Alice', 'Smith'), ('Bob', 'Lee');
 
-SELECT nombre, sha256(nombre) FROM personas;
-SELECT nombre, apellido, sha256(nombre, apellido) FROM personas;
+SELECT name, sha256(name) FROM people;
+SELECT name, last_name, sha256(name, last_name) FROM people;
 
-SELECT nombre, md5(nombre) FROM personas;
-SELECT nombre, apellido, md5(nombre, apellido) FROM personas;
+SELECT name, md5(name) FROM people;
+SELECT name, last_name, md5(name, last_name) FROM people;
 
-SELECT nombre, apellido, sha256(nombre, apellido), hex(sha256_bytes(nombre, apellido)) FROM personas;
-SELECT nombre, apellido, md5(nombre, apellido), hex(md5_bytes(nombre, apellido)) FROM personas;
+SELECT name, last_name, sha256(name, last_name), hex(sha256_bytes(name, last_name)) FROM people;
+SELECT name, last_name, md5(name, last_name), hex(md5_bytes(name, last_name)) FROM people;
 
-SELECT *, sha256(p.nombre, p.apellido) FROM personas p;
+SELECT *, sha256(p.name, p.last_name) FROM people p;
+
+SELECT *, blake2s256(p.name, p.last_name) FROM people p;
